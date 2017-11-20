@@ -1,14 +1,15 @@
 package katas;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import model.Bookmark;
-import model.Movie;
-import model.MovieList;
-import util.DataUtil;
-
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
+import model.MovieList;
+import util.BoxArtUtil;
+import util.DataUtil;
 
 /*
     Goal: Retrieve the id, title, and smallest box art url for every video
@@ -16,9 +17,17 @@ import java.util.Map;
     Output: List of ImmutableMap.of("id", "5", "title", "Bad Boys", "boxart": "url)
 */
 public class Kata7 {
-    public static List<Map> execute() {
+    @SuppressWarnings("rawtypes")
+	public static List<Map> execute() {
         List<MovieList> movieLists = DataUtil.getMovieLists();
-
-        return ImmutableList.of(ImmutableMap.of("id", 5, "title", "Bad Boys", "boxart", "url"));
+        List<Map> map = movieLists.stream()
+	        	.flatMap(movie -> movie.getVideos().stream())
+	        	.map(video -> ImmutableMap.of("id", video.getId(), "title", video.getTitle(), 
+	        			// getting smallest boxarts
+	        			"url", video.getBoxarts().stream()
+	        						.reduce(BoxArtUtil::smallest)
+	        						.get().getUrl()))
+	        	.collect(Collectors.toList());
+        return ImmutableList.copyOf(map);
     }
 }

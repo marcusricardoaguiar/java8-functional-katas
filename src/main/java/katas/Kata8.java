@@ -1,15 +1,16 @@
 package katas;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.codepoetics.protonpack.StreamUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import model.Bookmark;
 import model.Movie;
-import model.MovieList;
 import util.DataUtil;
-
-import java.util.List;
-import java.util.Map;
 
 /*
     Goal: Combine videos and bookmarks by index (StreamUtils.zip) (https://github.com/poetix/protonpack)
@@ -17,12 +18,16 @@ import java.util.Map;
     Output: List of ImmutableMap.of("videoId", "5", "bookmarkId", "3")
 */
 public class Kata8 {
-    public static List<Map> execute() {
+    @SuppressWarnings("rawtypes")
+	public static List<Map> execute() {
         List<Movie> movies = DataUtil.getMovies();
         List<Bookmark> bookMarks = DataUtil.getBookMarks();
 
-        // StreamUtils.zip()
+        List<Map> map = StreamUtils
+        	.zip(movies.stream(), bookMarks.stream(),
+        			(a, b) -> ImmutableMap.of("videoId", a.getId(), "bookmarkId", b.getId()))
+           	.collect(Collectors.toList());
 
-        return ImmutableList.of(ImmutableMap.of("videoId", 5, "bookmarkId", 3));
+        return ImmutableList.copyOf(map);
     }
 }

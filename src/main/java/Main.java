@@ -1,5 +1,16 @@
-import katas.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import katas.Kata1;
+import katas.Kata10;
+import katas.Kata11;
+import katas.Kata2;
+import katas.Kata3;
+import katas.Kata4;
+import katas.Kata5;
+import katas.Kata6;
+import katas.Kata7;
+import katas.Kata8;
+import katas.Kata9;
 
 public class Main {
     public static void main(String[] args) {
