@@ -2,11 +2,11 @@ package katas;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import util.DataUtil;
 
 /*
@@ -62,14 +62,20 @@ public class Kata10 {
         			"videos", videos.stream()
         						.filter(video -> video.get("listId").equals(list.get("id")))
         						// mapping id and title of each video
-        						.map(video -> ImmutableMap.of(
-			        							"id", video.get("id"), 
-			        							"title", video.get("title"))
-        						).collect(Collectors.toList())
+        						.map(getVideo())
+        						.collect(Collectors.toList())
         			)
         	)
         	.collect(Collectors.toList());
 
         return ImmutableList.copyOf(map);
     }
+    
+    // Get video info
+ 	@SuppressWarnings ("rawtypes")
+ 	public static Function<Map, Map> getVideo() {         
+ 		return video -> ImmutableMap.of(
+				"id", video.get("id"), 
+				"title", video.get("title"));
+ 	}
 }

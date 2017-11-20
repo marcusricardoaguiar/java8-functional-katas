@@ -1,15 +1,16 @@
 package katas;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import model.BoxArt;
 import util.BoxArtUtil;
 import util.DataUtil;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /*
     Goal: Create a datastructure from the given data:
@@ -65,35 +66,42 @@ public class Kata11 {
 	public static List<Map> execute() {
         List<Map> lists = DataUtil.getLists();
         List<Map> videos = DataUtil.getVideos();
-        List<Map> boxArts = DataUtil.getBoxArts();
-        List<Map> bookmarkList = DataUtil.getBookmarkList();
 
         List<Map> map = lists.stream()
             	.map(list -> ImmutableMap.of(
             			"name", list.get("name"),
             			"videos", videos.stream()
             						.filter(video -> video.get("listId").equals(list.get("id")))
-            						.map(video -> ImmutableMap.of(
-    			        							"id", video.get("id"),
-    			        							"title", video.get("title"),
-    			        							// getting the smallest boxArt of each video
-    			        							"boxart", boxArts.stream()
-			    			        					        .filter(boxArt -> boxArt.get("videoId").equals(video.get("id")))
-			    			        					        .map(boxArt -> new BoxArt(Integer.valueOf(boxArt.get("width").toString()),
-			    			        					        		Integer.valueOf(boxArt.get("height").toString()),
-			    			        					        		boxArt.get("url").toString()))
-			    			        					        .reduce(BoxArtUtil::smallest)
-			    			        					        .get().getUrl(),
-			    			        			    // getting time of each bookmark
-			    			        				"time", bookmarkList.stream()
-			    			        							.filter(bookMark -> bookMark.get("videoId").equals(video.get("id")))
-			    			        							.map(bookMark -> bookMark.get("time"))
-			    			        							.findAny().get())
-            						).collect(Collectors.toList())
+            						.map(getVideo())
+            						.collect(Collectors.toList())
             			)
             	)
             	.collect(Collectors.toList());
 
         return ImmutableList.copyOf(map);
     }
+	
+	// Get video info
+	@SuppressWarnings ("rawtypes")
+	public static Function<Map, Map> getVideo() {
+		List<Map> boxArts = DataUtil.getBoxArts();
+        List<Map> bookmarkList = DataUtil.getBookmarkList();
+        
+		return video -> ImmutableMap.of(
+				"id", video.get("id"),
+				"title", video.get("title"),
+				// getting the smallest boxArt of each video
+				"boxart", boxArts.stream()
+					        .filter(boxArt -> boxArt.get("videoId").equals(video.get("id")))
+					        .map(boxArt -> new BoxArt(Integer.valueOf(boxArt.get("width").toString()),
+					        		Integer.valueOf(boxArt.get("height").toString()),
+					        		boxArt.get("url").toString()))
+					        .reduce(BoxArtUtil::smallest)
+					        .get().getUrl(),
+			    // getting time of each bookmark
+				"time", bookmarkList.stream()
+							.filter(bookMark -> bookMark.get("videoId").equals(video.get("id")))
+							.map(bookMark -> bookMark.get("time"))
+							.findAny().get());
+	}
 }
