@@ -97,11 +97,11 @@ public class Kata11 {
 					        		Integer.valueOf(boxArt.get("height").toString()),
 					        		boxArt.get("url").toString()))
 					        .reduce(BoxArtUtil::smallest)
-					        .get().getUrl(),
+					        .map(boxArt -> boxArt.getUrl()),
 			    // getting time of each bookmark
 				"time", bookmarkList.stream()
 							.filter(bookMark -> bookMark.get("videoId").equals(video.get("id")))
 							.map(bookMark -> bookMark.get("time"))
-							.findAny().get());
+							.findAny());
 	}
 }

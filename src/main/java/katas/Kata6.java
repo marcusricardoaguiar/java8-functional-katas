@@ -1,6 +1,8 @@
 package katas;
 
 import java.util.List;
+
+import model.BoxArt;
 import model.Movie;
 import util.BoxArtUtil;
 import util.DataUtil;
@@ -16,7 +18,7 @@ public class Kata6 {
         return movies.stream()
         	.flatMap(movie -> movie.getBoxarts().stream())
         	.reduce(BoxArtUtil::largest)
-        	.map(boxArt -> boxArt.getUrl())
+        	.map(BoxArt::getUrl)
         	.orElse("");
     }
 }
